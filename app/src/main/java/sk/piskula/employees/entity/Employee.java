@@ -1,36 +1,25 @@
 package sk.piskula.employees.entity;
 
+import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.PrimaryKey;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.j256.ormlite.field.DatabaseField;
-import com.j256.ormlite.table.DatabaseTable;
-
-import java.io.Serializable;
-import java.math.BigDecimal;
-import java.util.Date;
 import java.util.Objects;
 
 /**
  * @author Ondrej Oravcok
  * @version 31.7.2017
  */
-@DatabaseTable(tableName = "employee")
+@Entity
 public class Employee implements Parcelable {
 
-    @DatabaseField(generatedId = true)
+    @PrimaryKey
     private Long id;
 
-    @DatabaseField(canBeNull = false, columnName = "first_name")
     private String firstName;
-
-    @DatabaseField(canBeNull = false, columnName = "last_name")
     private String lastName;
-
-    @DatabaseField(canBeNull = false, foreign = true, foreignAutoRefresh = true)
-    private Department department;
-
-    @DatabaseField(canBeNull = true)
+    private String department;
     private String avatar;
 
     // end of attributes
@@ -59,11 +48,11 @@ public class Employee implements Parcelable {
         this.lastName = lastName;
     }
 
-    public Department getDepartment() {
+    public String getDepartment() {
         return department;
     }
 
-    public void setDepartment(Department department) {
+    public void setDepartment(String department) {
         this.department = department;
     }
 

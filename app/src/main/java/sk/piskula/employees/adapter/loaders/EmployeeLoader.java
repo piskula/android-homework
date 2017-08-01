@@ -3,13 +3,10 @@ package sk.piskula.employees.adapter.loaders;
 import android.content.Context;
 import android.widget.Toast;
 
-import com.j256.ormlite.android.apptools.OpenHelperManager;
-
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import sk.piskula.employees.data.DatabaseHelper;
+import sk.piskula.employees.data.AppDatabase;
 import sk.piskula.employees.entity.Employee;
 
 /**
@@ -31,8 +28,9 @@ public class EmployeeLoader extends AbstractAsyncTaskLoader<List<Employee>> {
     public List<Employee> loadInBackground() {
         try {
             Thread.sleep(1000);
-            return OpenHelperManager.getHelper(context, DatabaseHelper.class).getEmployeeDao().queryForAll();
-        } catch (SQLException | InterruptedException e) {
+            AppDatabase database = AppDatabase.getDatabase(context);
+            return database.employeeModel().getAlLEmployees();
+        } catch (InterruptedException e) {
             Toast.makeText(context, "Error: Cannot load employees", Toast.LENGTH_SHORT).show();
         }
         return new ArrayList<>();

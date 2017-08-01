@@ -18,6 +18,7 @@ import java.util.List;
 import sk.piskula.employees.R;
 import sk.piskula.employees.adapter.EmployeeAdapter;
 import sk.piskula.employees.adapter.loaders.EmployeeLoader;
+import sk.piskula.employees.data.AppDatabase;
 import sk.piskula.employees.entity.Employee;
 
 /**
@@ -48,14 +49,7 @@ public class EmployeeListFragment extends Fragment implements EmployeeAdapter.Ca
 
         loadingBar = view.findViewById(R.id.fill_ups_list_loading);
         emptyList = view.findViewById(R.id.fill_ups_list_empty);
-
-//        addButton = getActivity().findViewById(R.id.fab_add);
-//        addButton.setVisibility(View.VISIBLE);
-//        addButton.setOnClickListener(this);
-
         recyclerView = view.findViewById(R.id.fill_ups_list);
-//        recyclerView.addItemDecoration(new DividerItemDecoration(recyclerView.getContext(),
-//                ((LinearLayoutManager) recyclerView.getLayoutManager()).getOrientation()));
 
         if (adapter == null)
             adapter = new EmployeeAdapter(this);

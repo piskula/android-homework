@@ -51,7 +51,7 @@ public class EmployeeAdapter extends RecyclerView.Adapter<EmployeeAdapter.ViewHo
             //set views
             holder.txtLastName.setText(currentItem.getLastName());
             holder.txtFirstName.setText(currentItem.getFirstName());
-            holder.txtDepartment.setText(currentItem.getDepartment().getName());
+            holder.txtDepartment.setText(currentItem.getDepartment());
             Picasso.with(context).load(currentItem.getAvatar()).placeholder(
                     R.mipmap.ic_launcher_round).resize(150,150).centerInside().into(holder.icon);
         }
