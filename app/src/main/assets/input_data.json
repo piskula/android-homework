@@ -1,0 +1,64 @@
+{
+  "Departments": [
+    {
+      "Name": "RD",
+      "employees": [
+        {
+          "firstName": "John",
+          "lastName": "Smith",
+          "avatar": "http://icons.iconarchive.com/icons/bevel-and-emboss/character/64/chef-icon.png"
+        },
+        {
+          "firstName": "Joe",
+          "lastName": "Smith",
+          "avatar": "http://icons.iconarchive.com/icons/martin-berube/people/64/chef-icon.png"
+        },
+        {
+          "firstName": "Peter",
+          "lastName": "Frank",
+          "avatar": "http://icons.iconarchive.com/icons/martin-berube/character/64/Chef-icon.png"
+        }
+      ]
+    },
+    {
+      "Name": "HR",
+      "employees": [
+        {
+          "firstName": "John",
+          "lastName": "Doe",
+          "avatar": "http://icons.iconarchive.com/icons/martin-berube/character/64/Doctor-icon.png"
+        },
+        {
+          "firstName": "Anna",
+          "lastName": "Smith",
+          "avatar": "http://icons.iconarchive.com/icons/martin-berube/character/64/Snowman-icon.png"
+        },
+        {
+          "firstName": "Peter",
+          "lastName": "Jones",
+          "avatar": "http://icons.iconarchive.com/icons/martin-berube/character/64/Santa-icon.png"
+        }
+      ]
+    },
+    {
+      "Name": "FN",
+      "employees": [
+        {
+          "firstName": "John",
+          "lastName": "King",
+          "avatar": "http://icons.iconarchive.com/icons/martin-berube/character/64/Angel-icon.png"
+        },
+        {
+          "firstName": "Anna",
+          "lastName": "Smith",
+          "avatar": "http://icons.iconarchive.com/icons/martin-berube/character/64/Doctor-icon.png"
+        },
+        {
+          "firstName": "Peter",
+          "lastName": "Falk",
+          "avatar": "http://icons.iconarchive.com/icons/martin-berube/character/64/Chef-icon.png"
+        }
+      ]
+    }
+  ]
+}
