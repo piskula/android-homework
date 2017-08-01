@@ -18,10 +18,12 @@ public class EmployeeLoader extends AbstractAsyncTaskLoader<List<Employee>> {
     public static final int ID = 1;
 
     private Context context;
+    private List<String> departments;
 
-    public EmployeeLoader(Context context) {
+    public EmployeeLoader(Context context, List<String> departments) {
         super(context);
         this.context = context;
+        this.departments = departments;
     }
 
     @Override
@@ -29,10 +31,19 @@ public class EmployeeLoader extends AbstractAsyncTaskLoader<List<Employee>> {
         try {
             Thread.sleep(1000);
             AppDatabase database = AppDatabase.getDatabase(context);
-            return database.employeeModel().getAlLEmployees();
+            if (departments.isEmpty())
+                return database.employeeModel().getAlLEmployees();
+            else {
+                List<Employee> result = new ArrayList<>();
+                for (String department : departments)
+                    result.addAll(database.employeeModel().getEmployeesOfDepartment(department));
+
+                return result;
+            }
         } catch (InterruptedException e) {
             Toast.makeText(context, "Error: Cannot load employees", Toast.LENGTH_SHORT).show();
         }
         return new ArrayList<>();
     }
+
 }

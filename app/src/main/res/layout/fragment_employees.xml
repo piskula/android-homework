@@ -17,20 +17,26 @@
         app:layoutManager="LinearLayoutManager"
         tools:listitem="@layout/list_item_employee" />
 
-    <TextView
-        android:id="@+id/fill_ups_list_empty"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center"
-        android:visibility="gone"
-        android:text="nic tu neni"/>
-
-    <ProgressBar
-        android:id="@+id/fill_ups_list_loading"
+    <LinearLayout
+        android:id="@+id/progress_bar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:gravity="center"
         android:layout_centerInParent="true"
-        android:indeterminate="true"
-        android:visibility="visible" />
+        android:orientation="vertical"
+        >
+
+        <ProgressBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:indeterminate="true"
+            android:visibility="visible" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:text="searching for employees..."/>
+    </LinearLayout>
 
 </RelativeLayout>

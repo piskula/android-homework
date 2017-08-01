@@ -22,4 +22,10 @@ public interface EmployeeDao {
     @Query("SELECT * FROM employee")
     List<Employee> getAlLEmployees();
 
+    @Query("SELECT DISTINCT department FROM employee")
+    List<String> getAllDepartments();
+
+    @Query("SELECT * FROM employee WHERE department = :department")
+    List<Employee> getEmployeesOfDepartment(String department);
+
 }
