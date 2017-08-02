@@ -18,7 +18,7 @@ import java.util.Set;
 
 import sk.piskula.employees.R;
 import sk.piskula.employees.adapter.EmployeeCursorAdapter;
-import sk.piskula.employees.data.EmployeeContract;
+import sk.piskula.employees.data.EmployeeContract.EmployeeEntry;
 
 /**
  * @author Ondrej Oravcok
@@ -30,12 +30,6 @@ public class EmployeeListFragment extends Fragment implements EmployeeCursorAdap
     private static final int EMPLOYEE_LOADER = 712;
 
     private EmployeeCursorAdapter adapter;
-    private Set<String> departments = new HashSet<>();
-
-    public void notifyChangeDepartments(Set<String> departments) {
-        this.departments = departments;
-        // TODO filter
-    }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -70,15 +64,15 @@ public class EmployeeListFragment extends Fragment implements EmployeeCursorAdap
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         String[] projection = {
-                EmployeeContract.EmployeeEntry._ID,
-                EmployeeContract.EmployeeEntry.COLUMN_LAST_NAME,
-                EmployeeContract.EmployeeEntry.COLUMN_FIRST_NAME,
-                EmployeeContract.EmployeeEntry.COLUMN_DEPARTMENT,
-                EmployeeContract.EmployeeEntry.COLUMN_AVATAR
+                EmployeeEntry._ID,
+                EmployeeEntry.COLUMN_LAST_NAME,
+                EmployeeEntry.COLUMN_FIRST_NAME,
+                EmployeeEntry.COLUMN_DEPARTMENT,
+                EmployeeEntry.COLUMN_AVATAR
         };
 
         return new CursorLoader(getContext(),
-                EmployeeContract.EmployeeEntry.CONTENT_URI,
+                EmployeeEntry.CONTENT_URI,
                 projection,
                 null,
                 null,

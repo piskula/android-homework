@@ -12,11 +12,9 @@ import java.util.Objects;
  * @version 31.7.2017
  */
 @Entity
-public class Employee implements Parcelable {
+public class Employee {
 
-    @PrimaryKey
     private Long id;
-
     private String firstName;
     private String lastName;
     private String department;
@@ -99,43 +97,4 @@ public class Employee implements Parcelable {
                 + "}";
     }
 
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel parcel, int i) {
-        // TODO
-    }
-
-    public Employee() {
-    }
-
-    protected Employee(Parcel in) {
-        this.id = (Long) in.readValue(Long.class.getClassLoader());
-        // TODO
-//        this.vehicle = in.readParcelable(Vehicle.class.getClassLoader());
-//        this.distanceFromLastFillUp = (Long) in.readValue(Long.class.getClassLoader());
-//        this.fuelVolume = (BigDecimal) in.readSerializable();
-//        this.fuelPricePerLitre = (BigDecimal) in.readSerializable();
-//        this.fuelPriceTotal = (BigDecimal) in.readSerializable();
-//        this.isFullFillUp = in.readByte() != 0;
-//        this.fuelConsumption = (BigDecimal) in.readSerializable();
-//        long tmpDate = in.readLong();
-//        this.date = tmpDate == -1 ? null : new Date(tmpDate);
-//        this.info = in.readString();
-    }
-
-    public static final Creator<Employee> CREATOR = new Creator<Employee>() {
-        @Override
-        public Employee createFromParcel(Parcel parcel) {
-            return new Employee(parcel);
-        }
-
-        @Override
-        public Employee[] newArray(int size) {
-            return new Employee[size];
-        }
-    };
 }

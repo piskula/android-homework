@@ -19,16 +19,23 @@ import sk.piskula.employees.entity.Employee;
  * @author Ondrej Oravcok
  * @version 2.8.2017
  */
-
 public class EmployeeCursorAdapter extends CursorAdapter {
 
     private Callback callback;
 
+    /**
+     * constructor
+     *
+     * @param context context
+     * @param cursor Cursor with data from DB
+     * @param callback callback for itemClick support
+     */
     public EmployeeCursorAdapter(Context context, Cursor cursor, Callback callback) {
         super(context, cursor, 0);
         this.callback = callback;
     }
 
+    // to handle itemClick on employee
     public interface Callback {
         void onItemClick(View v, int employeeId);
     }
