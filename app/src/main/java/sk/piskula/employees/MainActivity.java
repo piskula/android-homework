@@ -21,7 +21,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import sk.piskula.employees.data.AppDatabase;
 import sk.piskula.employees.entity.Employee;
@@ -36,7 +38,7 @@ public class MainActivity extends AppCompatActivity {
     public static final String RESULT_OK = "OK";
 
     private List<String> departments = new ArrayList<>();
-    private List<String> departmentsSelected = new ArrayList<>();
+    private Set<String> departmentsSelected = new HashSet<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,12 +77,8 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
         if (id <= departments.size()) {
             if (!item.isChecked()) {
                 item.setChecked(true);

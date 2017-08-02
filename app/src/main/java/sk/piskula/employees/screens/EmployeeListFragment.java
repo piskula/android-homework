@@ -12,7 +12,9 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import sk.piskula.employees.R;
 import sk.piskula.employees.adapter.EmployeeAdapter;
@@ -31,9 +33,9 @@ public class EmployeeListFragment extends Fragment implements EmployeeAdapter.Ca
 
     private List<Employee> data;
     private EmployeeAdapter adapter;
-    private List<String> departments = new ArrayList<>();
+    private Set<String> departments = new HashSet<>();
 
-    public void notifyChangeDepartments(List<String> departments) {
+    public void notifyChangeDepartments(Set<String> departments) {
         this.departments = departments;
         getLoaderManager().restartLoader(EmployeeLoader.ID, null, this);
     }

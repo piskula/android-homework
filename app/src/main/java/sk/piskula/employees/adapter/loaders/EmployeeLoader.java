@@ -5,6 +5,7 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import sk.piskula.employees.data.AppDatabase;
 import sk.piskula.employees.entity.Employee;
@@ -18,9 +19,9 @@ public class EmployeeLoader extends AbstractAsyncTaskLoader<List<Employee>> {
     public static final int ID = 1;
 
     private Context context;
-    private List<String> departments;
+    private Set<String> departments;
 
-    public EmployeeLoader(Context context, List<String> departments) {
+    public EmployeeLoader(Context context, Set<String> departments) {
         super(context);
         this.context = context;
         this.departments = departments;
