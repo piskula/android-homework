@@ -13,7 +13,6 @@ import com.squareup.picasso.Picasso;
 
 import sk.piskula.employees.R;
 import sk.piskula.employees.data.EmployeeContract.EmployeeEntry;
-import sk.piskula.employees.entity.Employee;
 
 /**
  * @author Ondrej Oravcok
@@ -28,7 +27,7 @@ public class EmployeeCursorAdapter extends CursorAdapter {
      *
      * @param context context
      * @param cursor Cursor with data from DB
-     * @param callback callback for itemClick support
+     * @param callback
      */
     public EmployeeCursorAdapter(Context context, Cursor cursor, Callback callback) {
         super(context, cursor, 0);
@@ -42,7 +41,7 @@ public class EmployeeCursorAdapter extends CursorAdapter {
 
     @Override
     public View newView(Context context, Cursor cursor, ViewGroup parent) {
-        return LayoutInflater.from(context).inflate(R.layout.list_item_employee, parent, false);
+        return LayoutInflater.from(context).inflate(R.layout.item_employee, parent, false);
     }
 
     @Override
@@ -55,11 +54,11 @@ public class EmployeeCursorAdapter extends CursorAdapter {
         final int employeeId = cursor.getInt(cursor.getColumnIndexOrThrow(EmployeeEntry._ID));
         txtLastName.setText(cursor.getString(cursor.getColumnIndexOrThrow(EmployeeEntry.COLUMN_LAST_NAME)));
         txtFirstName.setText(cursor.getString(cursor.getColumnIndexOrThrow(EmployeeEntry.COLUMN_FIRST_NAME)));
-        txtDepartment.setText(cursor.getString(cursor.getColumnIndexOrThrow(EmployeeEntry.COLUMN_DEPARTMENT)));
+        // txtDepartment.setText(cursor.getString(cursor.getColumnIndexOrThrow(EmployeeEntry.COLUMN_DEPARTMENT)));  according to spec
         Picasso.with(context).load(cursor.getString(cursor.getColumnIndexOrThrow(EmployeeEntry.COLUMN_AVATAR)))
                 .placeholder(R.mipmap.ic_launcher_round).resize(150,150).centerInside().into(icon);
 
-        icon.setOnClickListener(new View.OnClickListener() {
+        view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 callback.onItemClick(view, employeeId);

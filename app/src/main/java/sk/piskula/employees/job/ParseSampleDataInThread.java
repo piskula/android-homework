@@ -4,7 +4,6 @@ import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.os.AsyncTask;
 import android.util.Log;
 
 import org.json.JSONArray;
@@ -20,32 +19,27 @@ import java.util.List;
 
 import sk.piskula.employees.data.EmployeeContract;
 
+import static sk.piskula.employees.job.ParseSampleDataWithAsyncTask.IS_FIRST_RUN_PARAM;
+
 /**
  * @author Ondrej Oravcok
  * @version 2.8.2017
  */
+public class ParseSampleDataInThread implements Runnable {
 
-public class ParseSampleDataFromJsonJob extends AsyncTask<String, Void, String> {
+    private static final String LOG_TAG = ParseSampleDataInThread.class.getSimpleName();
 
-    private static final String LOG_TAG = ParseSampleDataFromJsonJob.class.getSimpleName();
-
-    public static final String IS_FIRST_RUN_PARAM = "isThisFirstRunOfApplication";
     private static final String INPUT_FILE = "input_data.json";
-    private static final String RESULT_OK = "OK";
 
-    private Context context;
+    private Context mContext;
 
-    public ParseSampleDataFromJsonJob(Context context) {
-        this.context = context;
+    public ParseSampleDataInThread(Context context) {
+        super();
+        mContext = context;
     }
 
     @Override
-    protected void onPreExecute() {
-        Log.i(LOG_TAG, "Starting job: parsing JSON input data.");
-    }
-
-    @Override
-    protected String doInBackground(String... strings) {
+    public void run() {
         // this sleep is only to slow down system to see loaders
         try {
             Thread.sleep(2000);
@@ -56,20 +50,18 @@ public class ParseSampleDataFromJsonJob extends AsyncTask<String, Void, String> 
         String errMsg = null;
         List<ContentValues> employees = null;
         try {
-            InputStream is = context.getAssets().open(INPUT_FILE);
+            InputStream is = mContext.getAssets().open(INPUT_FILE);
             JSONObject json = new JSONObject(read(new BufferedReader(new InputStreamReader(is))));
             employees = transformJsonToEmployees(json);
         } catch (IOException e) {
-            errMsg = "Failed opening sample data file " + INPUT_FILE;
+            Log.e(LOG_TAG, "Failed opening sample data file " + INPUT_FILE);
+            return;
         } catch (JSONException e) {
-            errMsg = "JSON input data file " + INPUT_FILE + " is not valid.";
+            Log.e(LOG_TAG, "JSON input data file " + INPUT_FILE + " is not valid.");
+            return;
         }
 
-        // cancel Job in case of exception
-        if (errMsg != null)
-            return errMsg;
-
-        ContentResolver contentResolver = context.getContentResolver();
+        ContentResolver contentResolver = mContext.getContentResolver();
         for (ContentValues current : employees) {
             // if insertion failed
             if (contentResolver.insert(EmployeeContract.EmployeeEntry.CONTENT_URI, current) == null) {
@@ -77,33 +69,13 @@ public class ParseSampleDataFromJsonJob extends AsyncTask<String, Void, String> 
             }
         }
 
-        return RESULT_OK;
-    }
+        Log.i(LOG_TAG, "JSON input data parsed successfully.");
 
-    @Override
-    protected void onPostExecute(String result) {
-        if (RESULT_OK.equals(result)) {
-            Log.i(LOG_TAG, "JSON input data parsed successfully.");
+        SharedPreferences.Editor editor = mContext.getSharedPreferences(IS_FIRST_RUN_PARAM, Context.MODE_PRIVATE).edit();
+        editor.putBoolean(IS_FIRST_RUN_PARAM, false);
 
-            SharedPreferences.Editor editor = context
-                    .getSharedPreferences(IS_FIRST_RUN_PARAM, Context.MODE_PRIVATE).edit();
-            editor.putBoolean(IS_FIRST_RUN_PARAM, false);
-
-            editor.apply();
-            Log.i(LOG_TAG, "Shared preference '" + IS_FIRST_RUN_PARAM + "' has been saved.");
-        } else {
-            Log.e(LOG_TAG, "Loading of sample data ended with error. Deatiled: " + result);
-        }
-    }
-
-    private String read(BufferedReader bufferedReader) throws IOException {
-        StringBuilder sb = new StringBuilder();
-
-        String line = null;
-        while ((line = bufferedReader.readLine()) != null)
-            sb.append(line);
-
-        return sb.toString();
+        editor.apply();
+        Log.i(LOG_TAG, "Shared preference '" + IS_FIRST_RUN_PARAM + "' has been saved.");
     }
 
     private List<ContentValues> transformJsonToEmployees(JSONObject json) throws JSONException {
@@ -131,6 +103,16 @@ public class ParseSampleDataFromJsonJob extends AsyncTask<String, Void, String> 
             }
         }
         return result;
+    }
+
+    private String read(BufferedReader bufferedReader) throws IOException {
+        StringBuilder sb = new StringBuilder();
+
+        String line = null;
+        while ((line = bufferedReader.readLine()) != null)
+            sb.append(line);
+
+        return sb.toString();
     }
 
 }

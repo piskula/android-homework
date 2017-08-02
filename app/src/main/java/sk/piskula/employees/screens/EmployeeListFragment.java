@@ -13,9 +13,6 @@ import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import sk.piskula.employees.R;
 import sk.piskula.employees.adapter.EmployeeCursorAdapter;
 import sk.piskula.employees.data.EmployeeContract.EmployeeEntry;
@@ -35,10 +32,7 @@ public class EmployeeListFragment extends Fragment implements EmployeeCursorAdap
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
-
-        if (adapter == null) {
-            adapter = new EmployeeCursorAdapter(getContext(), null, this);
-        }
+        adapter = new EmployeeCursorAdapter(getContext(), null, this);
 
         getLoaderManager().initLoader(EMPLOYEE_LOADER, null, this);
     }
@@ -58,7 +52,8 @@ public class EmployeeListFragment extends Fragment implements EmployeeCursorAdap
 
     @Override
     public void onItemClick(View v, int employeeId) {
-        Toast.makeText(getActivity(), "Clicked on " + employeeId, Toast.LENGTH_SHORT).show();
+        Toast.makeText(getActivity(),
+                getString(R.string.clicked_on) + " " + employeeId, Toast.LENGTH_SHORT).show();
     }
 
     @Override

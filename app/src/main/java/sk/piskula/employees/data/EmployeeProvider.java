@@ -34,9 +34,6 @@ public class EmployeeProvider extends ContentProvider {
         sUriMatcher.addURI(EmployeeContract.CONTENT_AUTHORITY, EmployeeContract.PATH_EMPLOYEES + "/#", EMPLOYEE_ID);
     }
 
-    public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/employee";
-    public static final String CONTENT_TYPE = "vnd.android.cursor.dir/employee";
-
     private EmployeeDbHelper mDbHelper;
 
     @Override
