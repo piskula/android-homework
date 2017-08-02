@@ -21,6 +21,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <provider
+            android:name=".data.EmployeeProvider"
+            android:authorities="sk.piskula.employees"
+            android:exported="false" />
     </application>
 
 </manifest>

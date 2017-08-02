@@ -1,13 +1,13 @@
 package sk.piskula.employees.adapter.loaders;
 
 import android.content.Context;
-import android.widget.Toast;
+import android.database.Cursor;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import sk.piskula.employees.data.AppDatabase;
+import sk.piskula.employees.data.EmployeeContract.EmployeeEntry;
 import sk.piskula.employees.entity.Employee;
 
 /**
@@ -30,21 +30,46 @@ public class EmployeeLoader extends AbstractAsyncTaskLoader<List<Employee>> {
     @Override
     public List<Employee> loadInBackground() {
         try {
-            Thread.sleep(1000);
-            AppDatabase database = AppDatabase.getDatabase(context);
-            if (departments.isEmpty())
-                return database.employeeModel().getAlLEmployees();
-            else {
-                List<Employee> result = new ArrayList<>();
-                for (String department : departments)
-                    result.addAll(database.employeeModel().getEmployeesOfDepartment(department));
-
-                return result;
-            }
+            Thread.sleep(2000);
         } catch (InterruptedException e) {
-            Toast.makeText(context, "Error: Cannot load employees", Toast.LENGTH_SHORT).show();
+            Thread.interrupted();
         }
-        return new ArrayList<>();
+
+        // TODO respect selection
+        String[] projection = {
+                EmployeeEntry.COLUMN_LAST_NAME,
+                EmployeeEntry.COLUMN_FIRST_NAME,
+                EmployeeEntry.COLUMN_DEPARTMENT,
+                EmployeeEntry.COLUMN_AVATAR
+        };
+
+        Cursor cursor = context.getContentResolver().query(
+                EmployeeEntry.CONTENT_URI,
+                projection,
+                null,
+                null,
+                null);
+
+        int columnIndexId = cursor.getColumnIndex(EmployeeEntry._ID);
+        int columnIndexLastName = cursor.getColumnIndex(EmployeeEntry.COLUMN_LAST_NAME);
+        int columnIndexFirstName = cursor.getColumnIndex(EmployeeEntry.COLUMN_FIRST_NAME);
+        int columnIndexAvatar = cursor.getColumnIndex(EmployeeEntry.COLUMN_AVATAR);
+        int columnIndexDepartment = cursor.getColumnIndex(EmployeeEntry.COLUMN_DEPARTMENT);
+
+        List<Employee> result = new ArrayList<>();
+        while (cursor.moveToNext()) {
+            Employee employee = new Employee();
+
+            // TODO repair employee.setId(cursor.getLong(columnIndexId));
+            employee.setLastName(cursor.getString(columnIndexLastName));
+            employee.setFirstName(cursor.getString(columnIndexFirstName));
+            employee.setDepartment(cursor.getString(columnIndexDepartment));
+            employee.setAvatar(cursor.getString(columnIndexAvatar));
+
+            result.add(employee);
+        }
+        cursor.close();
+        return result;
     }
 
 }

@@ -1,8 +1,12 @@
 package sk.piskula.employees;
 
+import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.AssetManager;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -25,7 +29,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import sk.piskula.employees.data.AppDatabase;
+import sk.piskula.employees.data.EmployeeContract.EmployeeEntry;
 import sk.piskula.employees.entity.Employee;
 import sk.piskula.employees.screens.EmployeeListFragment;
 
@@ -63,13 +67,20 @@ public class MainActivity extends AppCompatActivity {
         menu.clear();
         int i = Menu.FIRST;
         int defaultRdIndex = -1;
-        departments = AppDatabase.getDatabase(this).employeeModel().getAllDepartments();
-        for (String department : departments) {
+
+        String[] projection = { EmployeeEntry.COLUMN_DEPARTMENT };
+        Cursor cursor = getContentResolver().query(
+                EmployeeEntry.CONTENT_URI, projection, null, null, null);
+
+        while (cursor.moveToNext()) {
+            String department = cursor.getString(cursor.getColumnIndex(EmployeeEntry.COLUMN_DEPARTMENT));
+            departments.add(department);
             menu.add(0, i, Menu.NONE, department).setTitle(department).setCheckable(true);
             if ("RD".equals(department))
                 defaultRdIndex = i - 1;
             i++;
         }
+
         if (defaultRdIndex >= 0)
             onOptionsItemSelected(menu.getItem(defaultRdIndex));
         return super.onCreateOptionsMenu(menu);
@@ -97,7 +108,6 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
-        AppDatabase.destroyInstance();
         super.onDestroy();
     }
 
@@ -116,6 +126,12 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         protected String doInBackground(String... strings) {
+            try {
+                Thread.sleep(2000);
+            } catch (InterruptedException e) {
+                Thread.interrupted();
+            }
+
             AssetManager assetManager = getAssets();
             JSONObject json = null;
             try {
@@ -126,10 +142,19 @@ public class MainActivity extends AppCompatActivity {
                 return "Failed opening sample data: " + e.getMessage();
             }
 
-            AppDatabase database = AppDatabase.getDatabase(context);
+            ContentResolver contentResolver = context.getContentResolver();
             try {
                 for (Employee current : transformJsonToEmployees(json)) {
-                    database.employeeModel().addEmployee(current);
+                    ContentValues values = new ContentValues();
+
+                    values.put(EmployeeEntry.COLUMN_LAST_NAME, current.getLastName());
+                    values.put(EmployeeEntry.COLUMN_FIRST_NAME, current.getFirstName());
+                    values.put(EmployeeEntry.COLUMN_DEPARTMENT, current.getDepartment());
+                    values.put(EmployeeEntry.COLUMN_AVATAR, current.getAvatar());
+
+                    if (contentResolver.insert(EmployeeEntry.CONTENT_URI, values) == null) {
+                        Toast.makeText(context, "Cannot create " + current, Toast.LENGTH_SHORT).show();
+                    }
                 }
             } catch (JSONException e) {
                 Log.e(TAG, "Error while parsing input data.", e);
@@ -190,7 +215,6 @@ public class MainActivity extends AppCompatActivity {
                     result.add(createdEmployee);
                 }
             }
-
             return result;
         }
 
