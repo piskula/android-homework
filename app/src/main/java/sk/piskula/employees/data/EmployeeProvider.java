@@ -56,11 +56,14 @@ public class EmployeeProvider extends ContentProvider {
         int match = sUriMatcher.match(uri);
         switch (match) {
             case EMPLOYEES:
+                // if you need all departments (for filtering)
                 if (projection != null && projection.length == 1
                         && projection[0].equals(EmployeeEntry.COLUMN_DEPARTMENT)) {
                     cursor = database.query(true, EmployeeEntry.TABLE_NAME,
                             projection, selection, selectionArgs, null, null, sortOrder, null);
-                } else {
+                }
+                //if you need all employees
+                else {
                     cursor = database.query(EmployeeEntry.TABLE_NAME,
                             projection, selection, selectionArgs, null, null, sortOrder);
                 }
@@ -74,6 +77,8 @@ public class EmployeeProvider extends ContentProvider {
             default:
                 throw new IllegalArgumentException("Cannot query unknown URI " + uri);
         }
+        cursor.setNotificationUri(getContext().getContentResolver(), uri);
+
         return cursor;
     }
 
@@ -137,6 +142,7 @@ public class EmployeeProvider extends ContentProvider {
             Log.e(LOG_TAG, "Failed to insert row for " + uri);
             return null;
         }
+        getContext().getContentResolver().notifyChange(uri, null);
 
         return ContentUris.withAppendedId(uri, id);
     }

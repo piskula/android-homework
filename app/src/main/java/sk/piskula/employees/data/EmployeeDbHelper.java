@@ -25,6 +25,7 @@ public class EmployeeDbHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         // Create a String that contains the SQL statement to create the employees table
         String SQL_CREATE_PETS_TABLE =  "CREATE TABLE " + EmployeeEntry.TABLE_NAME + " ("
+                + EmployeeEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
                 + EmployeeEntry.COLUMN_LAST_NAME + " TEXT NOT NULL, "
                 + EmployeeEntry.COLUMN_FIRST_NAME + " TEXT NOT NULL, "
                 + EmployeeEntry.COLUMN_DEPARTMENT + " TEXT NOT NULL, "

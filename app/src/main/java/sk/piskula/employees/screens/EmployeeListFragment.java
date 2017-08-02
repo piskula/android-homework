@@ -1,49 +1,52 @@
 package sk.piskula.employees.screens;
 
+import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
+import android.widget.ListView;
+import android.widget.Toast;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import sk.piskula.employees.R;
-import sk.piskula.employees.adapter.EmployeeAdapter;
-import sk.piskula.employees.adapter.loaders.EmployeeLoader;
-import sk.piskula.employees.entity.Employee;
+import sk.piskula.employees.adapter.EmployeeCursorAdapter;
+import sk.piskula.employees.data.EmployeeContract;
 
 /**
  * @author Ondrej Oravcok
  * @version 1.8.2017
  */
 
-public class EmployeeListFragment extends Fragment implements EmployeeAdapter.Callback, LoaderManager.LoaderCallbacks<List<Employee>> {
+public class EmployeeListFragment extends Fragment implements EmployeeCursorAdapter.Callback, LoaderManager.LoaderCallbacks<Cursor> {
 
-    private LinearLayout progressBar;
-    private RecyclerView recyclerView;
+    private static final int EMPLOYEE_LOADER = 712;
 
-    private List<Employee> data;
-    private EmployeeAdapter adapter;
+    private EmployeeCursorAdapter adapter;
     private Set<String> departments = new HashSet<>();
 
     public void notifyChangeDepartments(Set<String> departments) {
         this.departments = departments;
-        getLoaderManager().restartLoader(EmployeeLoader.ID, null, this);
+        // TODO filter
     }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
+
+        if (adapter == null) {
+            adapter = new EmployeeCursorAdapter(getContext(), null, this);
+        }
+
+        getLoaderManager().initLoader(EMPLOYEE_LOADER, null, this);
     }
 
     @Override
@@ -52,45 +55,43 @@ public class EmployeeListFragment extends Fragment implements EmployeeAdapter.Ca
 
         View view = inflater.inflate(R.layout.fragment_employees, container, false);
 
-        progressBar = view.findViewById(R.id.progress_bar);
-        recyclerView = view.findViewById(R.id.fill_ups_list);
-
-        if (adapter == null)
-            adapter = new EmployeeAdapter(this);
-
-        recyclerView.setAdapter(adapter);
-
-        getLoaderManager().initLoader(EmployeeLoader.ID, null, this);
+        ListView employees = view.findViewById(R.id.list_employees);
+        employees.setAdapter(adapter);
+        employees.setEmptyView(view.findViewById(R.id.empty_list_employees));
 
         return view;
     }
 
     @Override
-    public Loader<List<Employee>> onCreateLoader(int id, Bundle args) {
-        progressBar.setVisibility(View.VISIBLE);
-        recyclerView.setVisibility(View.GONE);
-        return new EmployeeLoader(getActivity(), departments);
+    public void onItemClick(View v, int employeeId) {
+        Toast.makeText(getActivity(), "Clicked on " + employeeId, Toast.LENGTH_SHORT).show();
     }
 
     @Override
-    public void onLoadFinished(Loader<List<Employee>> loader, List<Employee> data) {
-        this.data = data;
-        adapter.dataChange(data);
-        progressBar.setVisibility(View.GONE);
-        if (data.isEmpty()) {
-            recyclerView.setVisibility(View.GONE);
-        } else {
-            recyclerView.setVisibility(View.VISIBLE);
-        }
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        String[] projection = {
+                EmployeeContract.EmployeeEntry._ID,
+                EmployeeContract.EmployeeEntry.COLUMN_LAST_NAME,
+                EmployeeContract.EmployeeEntry.COLUMN_FIRST_NAME,
+                EmployeeContract.EmployeeEntry.COLUMN_DEPARTMENT,
+                EmployeeContract.EmployeeEntry.COLUMN_AVATAR
+        };
+
+        return new CursorLoader(getContext(),
+                EmployeeContract.EmployeeEntry.CONTENT_URI,
+                projection,
+                null,
+                null,
+                null);
     }
 
     @Override
-    public void onLoaderReset(Loader<List<Employee>> loader) {
-        if (!data.isEmpty())
-            data.clear();
+    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        adapter.swapCursor(data);
     }
 
     @Override
-    public void onItemClick(View v, Employee employee, int position) {
+    public void onLoaderReset(Loader<Cursor> loader) {
+        adapter.swapCursor(null);
     }
 }
