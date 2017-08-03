@@ -40,7 +40,6 @@ public class ParseSampleDataInThread implements Runnable {
 
     @Override
     public void run() {
-
         List<ContentValues> employees = null;
         try {
             InputStream is = mContext.getAssets().open(INPUT_FILE);
@@ -56,13 +55,13 @@ public class ParseSampleDataInThread implements Runnable {
 
         ContentResolver contentResolver = mContext.getContentResolver();
         for (ContentValues currentEmployee : employees) {
-            // if insertion failed
+            // check if insertion failed
             if (contentResolver.insert(EmployeeEntry.CONTENT_URI, currentEmployee) == null) {
                 Log.e(LOG_TAG, "Cannot create Employee " + currentEmployee);
             }
         }
 
-        Log.i(LOG_TAG, "JSON input data parsed successfully.");
+        Log.i(LOG_TAG, "JSON input data parsing ended.");
 
         mContext.getSharedPreferences(IS_FIRST_RUN_PARAM, Context.MODE_PRIVATE)
                 .edit().putBoolean(IS_FIRST_RUN_PARAM, false).apply();
@@ -81,7 +80,7 @@ public class ParseSampleDataInThread implements Runnable {
             String departmentString = department.getString("Name");
             JSONArray employees = department.getJSONArray("employees");
 
-            // iterate through employees
+            // iterate through employees in department
             for (int j = 0; j < employees.length(); j++) {
                 JSONObject employee = (JSONObject) employees.get(j);
                 ContentValues createdEmployee = new ContentValues();

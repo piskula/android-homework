@@ -20,19 +20,16 @@ import android.widget.CompoundButton;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import sk.piskula.employees.R;
-import sk.piskula.employees.adapter.EmployeeRecyclerAdapter;
+import sk.piskula.employees.adapter.EmployeeAdapter;
+import sk.piskula.employees.data.EmployeeContract;
 import sk.piskula.employees.data.EmployeeContract.EmployeeEntry;
-import sk.piskula.employees.adapter.dto.EmployeeDto;
 
 /**
  * @author Ondrej Oravcok
  * @version 1.8.2017
  */
-public class EmployeeListFragment extends Fragment implements EmployeeRecyclerAdapter.Callback,
+public class EmployeeListFragment extends Fragment implements EmployeeAdapter.Callback,
         LoaderManager.LoaderCallbacks<Cursor>,
         View.OnClickListener, CompoundButton.OnCheckedChangeListener {
 
@@ -41,13 +38,13 @@ public class EmployeeListFragment extends Fragment implements EmployeeRecyclerAd
     private String filterSelection = null;
     private String[] filterSelectionArgs = null;
 
-    private EmployeeRecyclerAdapter adapter;
+    private EmployeeAdapter adapter;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
-        adapter = new EmployeeRecyclerAdapter(getActivity(), this);
+        adapter = new EmployeeAdapter(getActivity(), this);
     }
 
     @Override
@@ -89,17 +86,10 @@ public class EmployeeListFragment extends Fragment implements EmployeeRecyclerAd
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        String[] projection = {
-                EmployeeEntry._ID,
-                EmployeeEntry.COLUMN_LAST_NAME,
-                EmployeeEntry.COLUMN_FIRST_NAME,
-                EmployeeEntry.COLUMN_DEPARTMENT,
-                EmployeeEntry.COLUMN_AVATAR
-        };
 
         return new CursorLoader(getContext(),
                 EmployeeEntry.CONTENT_URI,
-                projection,
+                EmployeeContract.ALL_COLUMNS,
                 filterSelection,
                 filterSelectionArgs,
                 null);
@@ -107,30 +97,12 @@ public class EmployeeListFragment extends Fragment implements EmployeeRecyclerAd
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        // I am not sure by this implementation
-        // previous solution with CursorAdapter was nice, but it supports only
-        // ListView, which is deprecated. So here I transform Cursor to List<entityDto>,
-        // but it may be bottleNeck while it is done on Main Thread
-        List<EmployeeDto> employeeList = new ArrayList<>();
-
-        while (data.moveToNext()) {
-            EmployeeDto employee = new EmployeeDto();
-
-            employee.setId(data.getInt(data.getColumnIndexOrThrow(EmployeeEntry._ID)));
-            employee.setLastName(data.getString(data.getColumnIndexOrThrow(EmployeeEntry.COLUMN_LAST_NAME)));
-            employee.setFirstName(data.getString(data.getColumnIndexOrThrow(EmployeeEntry.COLUMN_FIRST_NAME)));
-            employee.setAvatar(data.getString(data.getColumnIndexOrThrow(EmployeeEntry.COLUMN_AVATAR)));
-            employee.setDepartment(data.getString(data.getColumnIndexOrThrow(EmployeeEntry.COLUMN_DEPARTMENT)));
-
-            employeeList.add(employee);
-        }
-
-        adapter.swapData(employeeList);
+        adapter.swapCursor(data);
     }
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
-        adapter.swapData(new ArrayList<EmployeeDto>());
+        adapter.swapCursor(null);
     }
 
     @Override

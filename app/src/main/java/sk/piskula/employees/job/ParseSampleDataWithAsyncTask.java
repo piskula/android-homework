@@ -24,7 +24,6 @@ import sk.piskula.employees.data.EmployeeContract;
  * @author Ondrej Oravcok
  * @version 2.8.2017
  */
-
 public class ParseSampleDataWithAsyncTask extends AsyncTask<String, Void, String> {
 
     private static final String LOG_TAG = ParseSampleDataWithAsyncTask.class.getSimpleName();
@@ -46,13 +45,6 @@ public class ParseSampleDataWithAsyncTask extends AsyncTask<String, Void, String
 
     @Override
     protected String doInBackground(String... strings) {
-        // this sleep is only to slow down system to see loaders
-        try {
-            Thread.sleep(2000);
-        } catch (InterruptedException e) {
-            Thread.interrupted();
-        }
-
         String errMsg = null;
         List<ContentValues> employees = null;
         try {

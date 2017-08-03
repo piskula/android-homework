@@ -8,7 +8,6 @@ import android.provider.BaseColumns;
  * @author Ondrej Oravcok
  * @version 2.8.2017
  */
-
 public class EmployeeContract {
 
     private EmployeeContract() {
@@ -18,9 +17,17 @@ public class EmployeeContract {
     private static final Uri BASE_CONTENT_URI = Uri.parse("content://" + CONTENT_AUTHORITY);
     public static final String PATH_EMPLOYEES = "employees";
 
+    public static final String[] ALL_COLUMNS = {
+            EmployeeEntry._ID,
+            EmployeeEntry.COLUMN_LAST_NAME,
+            EmployeeEntry.COLUMN_FIRST_NAME,
+            EmployeeEntry.COLUMN_DEPARTMENT,
+            EmployeeEntry.COLUMN_AVATAR
+    };
+
     /**
      * Inner class that defines constant values for the employees database table.
-     * Each entry in the table represents a single employee.
+     * Each Entry in the table represents a single Employee.
      */
     public static final class EmployeeEntry implements BaseColumns {
 

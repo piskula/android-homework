@@ -1,13 +1,11 @@
 package sk.piskula.employees.data;
 
-import android.arch.persistence.db.SupportSQLiteOpenHelper;
 import android.content.ContentProvider;
 import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.UriMatcher;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteOpenHelper;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -52,17 +50,8 @@ public class EmployeeProvider extends ContentProvider {
         int match = sUriMatcher.match(uri);
         switch (match) {
             case EMPLOYEES:
-                // if you need all departments (for filtering)
-                if (projection != null && projection.length == 1
-                        && projection[0].equals(EmployeeEntry.COLUMN_DEPARTMENT)) {
-                    cursor = database.query(true, EmployeeEntry.TABLE_NAME,
-                            projection, selection, selectionArgs, null, null, sortOrder, null);
-                }
-                //if you need all employees
-                else {
-                    cursor = database.query(EmployeeEntry.TABLE_NAME,
-                            projection, selection, selectionArgs, null, null, sortOrder);
-                }
+                cursor = database.query(EmployeeEntry.TABLE_NAME,
+                        projection, selection, selectionArgs, null, null, sortOrder);
                 break;
             case EMPLOYEE_ID:
                 selection = EmployeeEntry._ID + "=?";
@@ -98,7 +87,7 @@ public class EmployeeProvider extends ContentProvider {
         final int match = sUriMatcher.match(uri);
         switch (match) {
             case EMPLOYEES:
-                return insertEmployee(uri, contentValues);
+                return validateImployeAndInsert(uri, contentValues);
             default:
                 throw new IllegalArgumentException("Insertion is not supported for " + uri);
         }
@@ -114,7 +103,7 @@ public class EmployeeProvider extends ContentProvider {
         return 0;
     }
 
-    private Uri insertEmployee(Uri uri, ContentValues values) {
+    private Uri validateImployeAndInsert(Uri uri, ContentValues values) {
 
         String firstName = values.getAsString(EmployeeEntry.COLUMN_FIRST_NAME);
         if (firstName == null) {

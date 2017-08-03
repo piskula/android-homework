@@ -1,6 +1,7 @@
 package sk.piskula.employees.adapter;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,30 +11,28 @@ import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import sk.piskula.employees.R;
-import sk.piskula.employees.adapter.dto.EmployeeDto;
+import sk.piskula.employees.data.EmployeeContract.EmployeeEntry;
 
 /**
  * @author Ondrej Oravcok
- * @version 2.8.2017
+ * @version 3.8.2017
  */
-public class EmployeeRecyclerAdapter extends RecyclerView.Adapter<EmployeeRecyclerAdapter.EmployeeViewHolder> {
+public class EmployeeAdapter extends RecyclerViewCursorAdapter<EmployeeAdapter.EmployeeViewHolder> {
 
-    private List<EmployeeDto> mItems;
-    private Context mContext;
+    private static final String LOG_TAG = EmployeeAdapter.class.getSimpleName();
+    private final Context mContext;
     private Callback mCallback;
-
-    public EmployeeRecyclerAdapter(Context context, Callback callback) {
-        mItems = new ArrayList<>();
-        mContext = context;
-        mCallback = callback;
-    }
 
     public interface Callback {
         void onItemClick(int employeeId);
+    }
+
+    public EmployeeAdapter(Context context, Callback callback)
+    {
+        super(null);
+        mContext = context;
+        mCallback = callback;
     }
 
     @Override
@@ -44,34 +43,31 @@ public class EmployeeRecyclerAdapter extends RecyclerView.Adapter<EmployeeRecycl
     }
 
     @Override
-    public void onBindViewHolder(EmployeeViewHolder holder, int position) {
-        final EmployeeDto currentEmployee = mItems.get(position);
+    public void onBindViewHolder(EmployeeViewHolder holder, final Cursor cursor) {
 
-        holder.txtLastName.setText(currentEmployee.getLastName());
-        holder.txtFirstName.setText(currentEmployee.getFirstName());
-        holder.txtDepartment.setText(currentEmployee.getDepartment());
-        Picasso.with(mContext).load(currentEmployee.getAvatar()).placeholder(
+        final int idColumnIndex = cursor.getColumnIndexOrThrow(EmployeeEntry._ID);
+        int lastNameColumnIndex = cursor.getColumnIndexOrThrow(EmployeeEntry.COLUMN_LAST_NAME);
+        int firstNameColumnIndex = cursor.getColumnIndexOrThrow(EmployeeEntry.COLUMN_FIRST_NAME);
+        int departmentColumnIndex = cursor.getColumnIndexOrThrow(EmployeeEntry.COLUMN_DEPARTMENT);
+        int avatarColumnIndex = cursor.getColumnIndexOrThrow(EmployeeEntry.COLUMN_AVATAR);
+
+        holder.txtLastName.setText(cursor.getString(lastNameColumnIndex));
+        holder.txtFirstName.setText(cursor.getString(firstNameColumnIndex));
+        holder.txtDepartment.setText(cursor.getString(departmentColumnIndex));
+        Picasso.with(mContext).load(cursor.getString(avatarColumnIndex)).placeholder(
                 R.mipmap.ic_launcher_round).resize(150,150).centerInside().into(holder.icon);
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mCallback.onItemClick(currentEmployee.getId());
+                mCallback.onItemClick(cursor.getInt(idColumnIndex));
             }
         });
     }
 
-    @Override
-    public int getItemCount() {
-        return mItems.size();
-    }
 
-    public void swapData(List<EmployeeDto> employees) {
-        mItems = employees;
-        notifyDataSetChanged();
-    }
-
-    class EmployeeViewHolder extends RecyclerView.ViewHolder {
+    public static class EmployeeViewHolder extends RecyclerView.ViewHolder
+    {
         TextView txtLastName;
         TextView txtFirstName;
         TextView txtDepartment;
@@ -85,7 +81,6 @@ public class EmployeeRecyclerAdapter extends RecyclerView.Adapter<EmployeeRecycl
             txtDepartment = view.findViewById(R.id.txt_item_employee_department);
             icon = view.findViewById(R.id.img_item_employee_icon);
         }
-
     }
 
 }
