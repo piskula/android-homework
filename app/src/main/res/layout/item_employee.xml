@@ -18,10 +18,11 @@
 
             <ImageView
                 android:id="@+id/img_item_employee_icon"
-                android:layout_width="100dp"
-                android:layout_height="100dp"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
                 android:background="?attr/selectableItemBackgroundBorderless"
-                android:scaleType="centerCrop"
+                android:scaleType="center"
+                android:layout_margin="15dp"
                 android:layout_alignParentTop="true"
                 android:contentDescription="@string/pic_icon_description"
                 android:layout_centerHorizontal="true" />

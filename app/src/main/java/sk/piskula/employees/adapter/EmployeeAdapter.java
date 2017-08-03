@@ -45,22 +45,23 @@ public class EmployeeAdapter extends RecyclerViewCursorAdapter<EmployeeAdapter.E
     @Override
     public void onBindViewHolder(EmployeeViewHolder holder, final Cursor cursor) {
 
-        final int idColumnIndex = cursor.getColumnIndexOrThrow(EmployeeEntry._ID);
+        int idColumnIndex = cursor.getColumnIndexOrThrow(EmployeeEntry._ID);
         int lastNameColumnIndex = cursor.getColumnIndexOrThrow(EmployeeEntry.COLUMN_LAST_NAME);
         int firstNameColumnIndex = cursor.getColumnIndexOrThrow(EmployeeEntry.COLUMN_FIRST_NAME);
         int departmentColumnIndex = cursor.getColumnIndexOrThrow(EmployeeEntry.COLUMN_DEPARTMENT);
         int avatarColumnIndex = cursor.getColumnIndexOrThrow(EmployeeEntry.COLUMN_AVATAR);
 
+        final int employeeId = cursor.getInt(idColumnIndex);
         holder.txtLastName.setText(cursor.getString(lastNameColumnIndex));
         holder.txtFirstName.setText(cursor.getString(firstNameColumnIndex));
         holder.txtDepartment.setText(cursor.getString(departmentColumnIndex));
         Picasso.with(mContext).load(cursor.getString(avatarColumnIndex)).placeholder(
-                R.mipmap.ic_launcher_round).resize(150,150).centerInside().into(holder.icon);
+                R.mipmap.ic_launcher_round).fit().into(holder.icon);
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mCallback.onItemClick(cursor.getInt(idColumnIndex));
+                mCallback.onItemClick(employeeId);
             }
         });
     }
