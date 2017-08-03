@@ -14,25 +14,10 @@
         android:textOn="@string/filter_toggle_on_RD"
         android:textOff="@string/filter_toggle_off"/>
 
-    <ListView
+    <android.support.v7.widget.RecyclerView
         android:id="@+id/list_employees"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/toggle_filter"
-        />
-
-    <RelativeLayout
-        android:id="@+id/empty_list_employees"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        >
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="No employee in database yet."/>
-
-    </RelativeLayout>
+        android:layout_below="@id/toggle_filter" />
 
 </RelativeLayout>

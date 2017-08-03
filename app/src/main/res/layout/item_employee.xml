@@ -4,7 +4,8 @@
     android:layout_height="wrap_content"
     android:orientation="horizontal"
     android:gravity="center"
-    android:layout_marginVertical="8dp"
+    android:layout_marginTop="8dp"
+    android:layout_marginBottom="8dp"
     >
 
     <LinearLayout
@@ -17,12 +18,10 @@
             android:id="@+id/img_item_employee_icon"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:contentDescription="volaco"
+            android:contentDescription="@string/pic_icon_description"
             android:src="@mipmap/ic_launcher" />
 
     </LinearLayout>
-
-
     
     <LinearLayout
         android:layout_width="0dp"

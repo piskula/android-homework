@@ -11,38 +11,44 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CompoundButton;
-import android.widget.ListView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import sk.piskula.employees.R;
-import sk.piskula.employees.adapter.EmployeeCursorAdapter;
+import sk.piskula.employees.adapter.EmployeeRecyclerAdapter;
 import sk.piskula.employees.data.EmployeeContract.EmployeeEntry;
+import sk.piskula.employees.adapter.dto.EmployeeDto;
 
 /**
  * @author Ondrej Oravcok
  * @version 1.8.2017
  */
 
-public class EmployeeListFragment extends Fragment implements EmployeeCursorAdapter.Callback,
-        LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener, CompoundButton.OnCheckedChangeListener {
+public class EmployeeListFragment extends Fragment implements EmployeeRecyclerAdapter.Callback,
+        LoaderManager.LoaderCallbacks<Cursor>,
+        View.OnClickListener, CompoundButton.OnCheckedChangeListener {
 
     private static final int EMPLOYEE_LOADER = 712;
 
     private String filterSelection = null;
     private String[] filterSelectionArgs = null;
 
-    private EmployeeCursorAdapter adapter;
+    private EmployeeRecyclerAdapter adapter;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
-        adapter = new EmployeeCursorAdapter(getContext(), null, this);
+        adapter = new EmployeeRecyclerAdapter(getActivity(), this);
 
         getLoaderManager().initLoader(EMPLOYEE_LOADER, null, this);
     }
@@ -53,10 +59,11 @@ public class EmployeeListFragment extends Fragment implements EmployeeCursorAdap
 
         View view = inflater.inflate(R.layout.fragment_employees, container, false);
 
-        // employees list
-        ListView employees = view.findViewById(R.id.list_employees);
+        // list of employees
+        RecyclerView employees = view.findViewById(R.id.list_employees);
+        employees.setHasFixedSize(true);
+        employees.setLayoutManager(new LinearLayoutManager(getActivity()));
         employees.setAdapter(adapter);
-        employees.setEmptyView(view.findViewById(R.id.empty_list_employees));
 
         // add dummy employee floating button
         FloatingActionButton addDummyEmployeeBtn = getActivity().findViewById(R.id.add_dummy_employee_float_btn);
@@ -70,7 +77,7 @@ public class EmployeeListFragment extends Fragment implements EmployeeCursorAdap
     }
 
     @Override
-    public void onItemClick(View v, int employeeId) {
+    public void onItemClick(int employeeId) {
         Toast.makeText(getActivity(),
                 getString(R.string.clicked_on) + " " + employeeId, Toast.LENGTH_SHORT).show();
     }
@@ -95,12 +102,30 @@ public class EmployeeListFragment extends Fragment implements EmployeeCursorAdap
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        adapter.swapCursor(data);
+        // I am not sure by this implementation
+        // previous solution with CursorAdapter was nice, but it supports only
+        // ListView, which is deprecated. So here I transform Cursor to List<entityDto>,
+        // but it may be bottleNeck while it is done on Main Thread
+        List<EmployeeDto> employeeList = new ArrayList<>();
+
+        while (data.moveToNext()) {
+            EmployeeDto employee = new EmployeeDto();
+
+            employee.setId(data.getInt(data.getColumnIndexOrThrow(EmployeeEntry._ID)));
+            employee.setLastName(data.getString(data.getColumnIndexOrThrow(EmployeeEntry.COLUMN_LAST_NAME)));
+            employee.setFirstName(data.getString(data.getColumnIndexOrThrow(EmployeeEntry.COLUMN_FIRST_NAME)));
+            employee.setAvatar(data.getString(data.getColumnIndexOrThrow(EmployeeEntry.COLUMN_AVATAR)));
+            employee.setDepartment(data.getString(data.getColumnIndexOrThrow(EmployeeEntry.COLUMN_DEPARTMENT)));
+
+            employeeList.add(employee);
+        }
+
+        adapter.swapData(employeeList);
     }
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
-        adapter.swapCursor(null);
+        adapter.swapData(new ArrayList<EmployeeDto>());
     }
 
     @Override
