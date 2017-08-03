@@ -2,4 +2,8 @@
     <string name="app_name">Employees</string>
     <string name="action_settings">Settings</string>
     <string name="clicked_on">Clicked on</string>
+    <string name="created_dummy_employee">Dummy employee created</string>
+    <string name="cannot_create_dummy_employee">ERROR: Cannot create Dummy Employee</string>
+    <string name="filter_toggle_on_RD">Filter RD</string>
+    <string name="filter_toggle_off">No Filter</string>
 </resources>

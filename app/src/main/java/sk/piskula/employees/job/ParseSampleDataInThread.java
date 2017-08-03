@@ -17,7 +17,7 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
-import sk.piskula.employees.data.EmployeeContract;
+import sk.piskula.employees.data.EmployeeContract.EmployeeEntry;
 
 import static sk.piskula.employees.job.ParseSampleDataWithAsyncTask.IS_FIRST_RUN_PARAM;
 
@@ -40,14 +40,7 @@ public class ParseSampleDataInThread implements Runnable {
 
     @Override
     public void run() {
-        // this sleep is only to slow down system to see loaders
-        try {
-            Thread.sleep(2000);
-        } catch (InterruptedException e) {
-            Thread.interrupted();
-        }
 
-        String errMsg = null;
         List<ContentValues> employees = null;
         try {
             InputStream is = mContext.getAssets().open(INPUT_FILE);
@@ -62,19 +55,18 @@ public class ParseSampleDataInThread implements Runnable {
         }
 
         ContentResolver contentResolver = mContext.getContentResolver();
-        for (ContentValues current : employees) {
+        for (ContentValues currentEmployee : employees) {
             // if insertion failed
-            if (contentResolver.insert(EmployeeContract.EmployeeEntry.CONTENT_URI, current) == null) {
-                Log.e(LOG_TAG, "Cannot create Employee " + current);
+            if (contentResolver.insert(EmployeeEntry.CONTENT_URI, currentEmployee) == null) {
+                Log.e(LOG_TAG, "Cannot create Employee " + currentEmployee);
             }
         }
 
         Log.i(LOG_TAG, "JSON input data parsed successfully.");
 
-        SharedPreferences.Editor editor = mContext.getSharedPreferences(IS_FIRST_RUN_PARAM, Context.MODE_PRIVATE).edit();
-        editor.putBoolean(IS_FIRST_RUN_PARAM, false);
+        mContext.getSharedPreferences(IS_FIRST_RUN_PARAM, Context.MODE_PRIVATE)
+                .edit().putBoolean(IS_FIRST_RUN_PARAM, false).apply();
 
-        editor.apply();
         Log.i(LOG_TAG, "Shared preference '" + IS_FIRST_RUN_PARAM + "' has been saved.");
     }
 
@@ -94,10 +86,10 @@ public class ParseSampleDataInThread implements Runnable {
                 JSONObject employee = (JSONObject) employees.get(j);
                 ContentValues createdEmployee = new ContentValues();
 
-                createdEmployee.put(EmployeeContract.EmployeeEntry.COLUMN_LAST_NAME, employee.getString("lastName"));
-                createdEmployee.put(EmployeeContract.EmployeeEntry.COLUMN_FIRST_NAME, employee.getString("firstName"));
-                createdEmployee.put(EmployeeContract.EmployeeEntry.COLUMN_DEPARTMENT, departmentString);
-                createdEmployee.put(EmployeeContract.EmployeeEntry.COLUMN_AVATAR, employee.getString("avatar"));
+                createdEmployee.put(EmployeeEntry.COLUMN_LAST_NAME, employee.getString("lastName"));
+                createdEmployee.put(EmployeeEntry.COLUMN_FIRST_NAME, employee.getString("firstName"));
+                createdEmployee.put(EmployeeEntry.COLUMN_DEPARTMENT, departmentString);
+                createdEmployee.put(EmployeeEntry.COLUMN_AVATAR, employee.getString("avatar"));
 
                 result.add(createdEmployee);
             }
