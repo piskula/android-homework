@@ -19,7 +19,6 @@ import sk.piskula.employees.data.EmployeeContract.EmployeeEntry;
  * @author Ondrej Oravcok
  * @version 2.8.2017
  */
-
 public class EmployeeProvider extends ContentProvider {
 
     public static final String LOG_TAG = EmployeeProvider.class.getSimpleName();

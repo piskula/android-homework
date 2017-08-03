@@ -49,6 +49,7 @@ public class EmployeeRecyclerAdapter extends RecyclerView.Adapter<EmployeeRecycl
 
         holder.txtLastName.setText(currentEmployee.getLastName());
         holder.txtFirstName.setText(currentEmployee.getFirstName());
+        holder.txtDepartment.setText(currentEmployee.getDepartment());
         Picasso.with(mContext).load(currentEmployee.getAvatar()).placeholder(
                 R.mipmap.ic_launcher_round).resize(150,150).centerInside().into(holder.icon);
 
@@ -73,6 +74,7 @@ public class EmployeeRecyclerAdapter extends RecyclerView.Adapter<EmployeeRecycl
     class EmployeeViewHolder extends RecyclerView.ViewHolder {
         TextView txtLastName;
         TextView txtFirstName;
+        TextView txtDepartment;
         ImageView icon;
 
         EmployeeViewHolder(View view) {
@@ -80,6 +82,7 @@ public class EmployeeRecyclerAdapter extends RecyclerView.Adapter<EmployeeRecycl
 
             txtLastName = view.findViewById(R.id.txt_item_employee_lastName);
             txtFirstName = view.findViewById(R.id.txt_item_employee_firstName);
+            txtDepartment = view.findViewById(R.id.txt_item_employee_department);
             icon = view.findViewById(R.id.img_item_employee_icon);
         }
 

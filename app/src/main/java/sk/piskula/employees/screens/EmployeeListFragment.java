@@ -11,7 +11,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
-import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -32,7 +32,6 @@ import sk.piskula.employees.adapter.dto.EmployeeDto;
  * @author Ondrej Oravcok
  * @version 1.8.2017
  */
-
 public class EmployeeListFragment extends Fragment implements EmployeeRecyclerAdapter.Callback,
         LoaderManager.LoaderCallbacks<Cursor>,
         View.OnClickListener, CompoundButton.OnCheckedChangeListener {
@@ -49,8 +48,6 @@ public class EmployeeListFragment extends Fragment implements EmployeeRecyclerAd
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
         adapter = new EmployeeRecyclerAdapter(getActivity(), this);
-
-        getLoaderManager().initLoader(EMPLOYEE_LOADER, null, this);
     }
 
     @Override
@@ -62,18 +59,26 @@ public class EmployeeListFragment extends Fragment implements EmployeeRecyclerAd
         // list of employees
         RecyclerView employees = view.findViewById(R.id.list_employees);
         employees.setHasFixedSize(true);
-        employees.setLayoutManager(new LinearLayoutManager(getActivity()));
+        employees.setLayoutManager(new GridLayoutManager(getActivity(), 3));
         employees.setAdapter(adapter);
 
         // add dummy employee floating button
-        FloatingActionButton addDummyEmployeeBtn = getActivity().findViewById(R.id.add_dummy_employee_float_btn);
+        FloatingActionButton addDummyEmployeeBtn = view.findViewById(R.id.add_dummy_employee_float_btn);
         addDummyEmployeeBtn.setOnClickListener(this);
 
         // filter On/Off switch
         ToggleButton filterOnOffToggleBtn = view.findViewById(R.id.toggle_filter);
         filterOnOffToggleBtn.setOnCheckedChangeListener(this);
+        initToggleFilterButtonAsActive(filterOnOffToggleBtn);   // default filter is On
+
+        getLoaderManager().initLoader(EMPLOYEE_LOADER, null, this);
 
         return view;
+    }
+
+    private void initToggleFilterButtonAsActive(ToggleButton button) {
+        button.setChecked(true);
+        switchFilterOn(true);
     }
 
     @Override
@@ -132,12 +137,12 @@ public class EmployeeListFragment extends Fragment implements EmployeeRecyclerAd
     public void onCheckedChanged(CompoundButton compoundButton, boolean isFilterOn) {
         switch (compoundButton.getId()) {
             case R.id.toggle_filter:
-                switchFilterOnOff(isFilterOn);
+                switchFilterOn(isFilterOn);
                 break;
         }
     }
 
-    private void switchFilterOnOff(boolean isOn) {
+    private void switchFilterOn(boolean isOn) {
         if (isOn) {
             filterSelection = EmployeeEntry.COLUMN_DEPARTMENT + "=?";
             filterSelectionArgs = new String[] { "RD" };

@@ -4,7 +4,7 @@
     <string name="clicked_on">Clicked on</string>
     <string name="created_dummy_employee">Dummy employee created</string>
     <string name="cannot_create_dummy_employee">ERROR: Cannot create Dummy Employee</string>
-    <string name="filter_toggle_on_RD">Filter RD</string>
+    <string name="filter_toggle_on_RD">Filter \'RD\' active</string>
     <string name="filter_toggle_off">No Filter</string>
     <string name="pic_icon_description">Icon of Employee</string>
 </resources>
