@@ -23,6 +23,7 @@
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:scaleType="centerCrop"
                 android:layout_alignParentTop="true"
+                android:contentDescription="@string/pic_icon_description"
                 android:layout_centerHorizontal="true" />
 
             <TextView
